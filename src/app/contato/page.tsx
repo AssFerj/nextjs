@@ -1,8 +1,8 @@
 export default function Contact() {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <h1>Contato</h1>
-        <div className="card w-full max-w-sm shadow-2xl bg-base-100">
+      <main className="flex flex-col items-center justify-between p-24">
+        <h1 className="my-10">Contato</h1>
+        <div className="card mt-5 w-full max-w-sm shadow-2xl bg-base-100">
           <form className="card-body">
           <h3 className="text-center">Contact Us</h3>
             <div className="form-control">
@@ -24,7 +24,7 @@ export default function Contact() {
                 <textarea className="textarea textarea-bordered" placeholder="Your Message"></textarea>
               </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary">Enviar</button>
+              <button className="btn btn-primary">Send</button>
             </div>
           </form>
         </div>
