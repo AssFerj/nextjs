@@ -5,15 +5,35 @@ import { PostType } from "@/app/utils/PostType";
 import { useState } from "react";
 import useSWR from "swr";
 
-export const revalidate = 1800; // Revalida a páginda a cada 30min
+const revalidate = 1800; // Revalidate page on 30min
+const postsPerPage = 8; // Number of posts per page
+const apiMaxPosts = 100; // Maximum number of posts from the API
 
 export default function Posts() {
-    const [ srcPost, setSrcPost ] = useState('')
+    // State Variables 
+    const [srcPost, setSrcPost] = useState('')
+    const [offset, setOffset] = useState(0);
+
+    // Variables to fetch data
     const URL = 'https://jsonplaceholder.typicode.com'
     const fetcher = (url: string) => fetch(url).then((res) => res.json())
-    const { data: posts, error: postsError, isLoading: postsLoading } = useSWR<PostType[]>(`${URL}/posts`, fetcher)
+    const { data: posts, error: postsError, isLoading: postsLoading } = useSWR<PostType[]>(`${URL}/posts?_start=${offset}&_limit=${postsPerPage}`, fetcher)
     const { data: comments, error: commentsError, isLoading: commentsLoading } = useSWR<CommentType[]>(`${URL}/comments`, fetcher)
+    
+    // Variables to filter posts
     const filteredPosts = posts?.filter(post => post.title.toLocaleLowerCase().includes(srcPost.toLocaleLowerCase()))
+    
+    // Variables to create pagination
+    const MAX_ITEMS = 9;
+    const MAX_LEFT = (MAX_ITEMS - 1) / 2;
+    const current = offset ? Math.floor(offset / postsPerPage) + 1 : 1;
+    const pages = Math.ceil((filteredPosts?.length ?? 0) / postsPerPage);
+    const firstBtn = Math.max(current - MAX_LEFT, 1);
+
+    const handlePageClick = (page: number) => {
+        setOffset((page - 1) * postsPerPage);
+    };
+
     return (
         <>
             <h2 className="my-5">Our Posts</h2>
@@ -40,6 +60,23 @@ export default function Posts() {
                         )
                     }
                 </div>
+                <ul className="join mt-5">
+                    {
+                        Array.from({ length: Math.ceil(apiMaxPosts / postsPerPage) }).map((_, index) => {
+                            const page = index + 1;
+                            return (
+                              <li key={page}>
+                                <button
+                                  className={`join-item btn ${page === current ? 'btn-disabled' : ''}`}
+                                  onClick={() => handlePageClick(page)}
+                                >
+                                  {page}
+                                </button>
+                              </li>
+                            );
+                        })
+                    }
+                </ul>
             </div>
         </>
     )

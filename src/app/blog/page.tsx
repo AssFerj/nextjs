@@ -1,4 +1,5 @@
 import GetPosts from "@/components/GetPosts";
+import { Pagination } from "@/components/Pagination";
 
 export default function Blog() {
     return (
